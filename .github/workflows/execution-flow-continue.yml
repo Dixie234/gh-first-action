@@ -1,4 +1,4 @@
-name: Deploy Project Execution Flow
+name: Deploy Project Execution Flow Continue
 on: workflow_dispatch
 jobs:
   test:
@@ -18,6 +18,7 @@ jobs:
       - name: Run Linting
         run: npm run lint --prefix second-action
       - name: Run tests
+        continue-on-error: true
         run: npm run test --prefix second-action
   build:
     needs: test
