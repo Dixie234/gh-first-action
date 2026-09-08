@@ -1,0 +1,38 @@
+name: AWS OpenID Connect Deploy
+on: workflow_dispatch
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Run Linting
+        run: npm run lint --prefix second-action
+      - name: Run tests
+        run: npm run test --prefix second-action
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Build Project
+        run: npm run build --prefix second-action
+      - name: Get AWS Permissions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::12345678910:/role/testgithubrole
+          aws-region: eu-west-1
+      - name: Deploy site
+        id: deploy
+        uses: ./.github/actions/deploy-s3-javascript
+        with:
+          bucket: my-bucket
+          bucket-region: eu-west-1
+          dist-folder: ./dist
+      - name: Output information
+        run: |
+          echo "Live URL: ${{ steps.deploy.outputs.website-url }}"
