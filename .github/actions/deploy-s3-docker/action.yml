@@ -15,5 +15,5 @@ outputs:
   website-url:
     description: 'Url to the deployed website'
 runs:
-  using: 'node20'
-  main: 'main.js'
+  using: 'docker'
+  image: 'Dockerfile'
